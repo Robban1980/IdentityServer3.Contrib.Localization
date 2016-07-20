@@ -1,16 +1,17 @@
 
+
 properties {
     $githubRepo = 'IdentityServer3.Contrib.Localization';
     $base_dir = resolve-path .
     $src_dir = "$base_dir\source";
     $packages_dir = "$src_dir\packages";
-    $config = 'debug';
+    $config = 'Release';
 	$sln = "$src_dir\Contrib.sln";
     $build_version = "$(get-date -Format "yyyy_MM_dd_")$(get-random -Maximum 100000)";
     $runsOnBuildServer = $false;
     $dist_dir = "$base_dir\dist";
     $test_report_dir = "$base_dir\TestResult";
-    $publishUri = $null;
+    $publishUri = "$base_dir\nuget_pkg";
     $publishUsername = $null;
     $publishPassword = $null;
     $publishApiKey = $null
@@ -67,12 +68,14 @@ task -name patch-assemblyinfo -precondition { return $runsOnBuildServer } -actio
 
 task -name build-sln -depends validate-config, restore-nuget, patch-assemblyinfo -action {
     exec {
+        Write-Host "Build 1"
         run-msbuild $sln 'build' $config
     }
 }
 
 task -name clean -depends validate-config -action {
     exec {
+        Write-Host "Build 2"
         run-msbuild $sln 'clean' $config
     }
 }
@@ -112,6 +115,7 @@ task -name ci -depends run-tests -action {
 
 task -name run-octopack -depends clean,run-tests -action {
     exec {
+        Write-Host "Build 3"
         run-msbuild $sln 'build' $config $true
     }
 }
@@ -161,8 +165,7 @@ task default -depends build-sln
 function run-msbuild($sln_file, $t, $cfg, $runOctopack=$false) {
     $v = if ($runsOnBuildServer) { 'n'} else { 'q' } 
     Framework '4.5.1'
-    msbuild /nologo /verbosity:$v $sln_file /t:$t /p:Configuration=$cfg /p:RunOctoPack=$runOctopack `
-        /p:OctoPackPublishPackageToFileShare=$dist_dir
+    msbuild /nologo /verbosity:$v $sln_file /t:$t /p:Configuration=$cfg /p:RunOctoPack=$runOctopack /p:OctoPackPublishPackageToFileShare=$dist_dir
 }
 
 function xunit_console_runner {

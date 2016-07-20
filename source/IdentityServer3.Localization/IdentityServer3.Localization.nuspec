@@ -8,11 +8,11 @@
     <description>Contrib implementation of ILocalizationService in IdentityServer3 for multiple languages</description>
     <projectUrl>http://github.com/johnkors/IdentityServer3.Contrib.Localization </projectUrl>    
     <releaseNotes>
-      Romanian ro-RO added. Updated IdentityServer package reference.
+      Japanese ja-JP added. Updated IdentityServer package reference.
     </releaseNotes>
   </metadata>
   <files>
-    <file src="bin\Release\**\*resources.dll"
-          target="lib/net45"/>
+    <file src="bin\Release\**\*resources.dll" target="lib/net45"/>
+    <file src="bin\release\**\*localization.dll" target="lib/net45"/>
   </files>
 </package>
